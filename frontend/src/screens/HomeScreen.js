@@ -21,7 +21,9 @@ const HomeScreen = () => {
     <div className="home-screen" style={{ 
       background: 'linear-gradient(120deg, #f8f9fa 0%, #e9ecef 100%)',
       minHeight: '100vh',
-      overflow: 'hidden'
+      margin: 0,
+      padding: 0,
+      width: '100%'
     }}>
       <Container style={{ maxWidth: '1400px' }} className="px-4">
         {/* Hero Section */}

@@ -1,7 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Row, Col, Card } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
+import { motion } from 'framer-motion';
+import { 
+  FaUsers, FaUserCheck, FaChartLine, FaMoneyBillWave,
+  FaArrowUp, FaArrowDown
+} from 'react-icons/fa';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import { getInventoryStock } from '../actions/inventoryActions';
@@ -41,100 +45,146 @@ const DashboardScreen = () => {
     }
   }, [dispatch, userInfo]);
 
+  const StatCard = ({ icon: Icon, title, value, increase, color }) => (
+    <motion.div
+      whileHover={{ translateY: -5 }}
+      transition={{ type: "spring", stiffness: 300 }}
+    >
+      <Card className="border-0 shadow-sm" style={{
+        borderRadius: '16px',
+        overflow: 'hidden',
+        background: `linear-gradient(45deg, ${color}08 0%, ${color}03 100%)`
+      }}>
+        <Card.Body className="p-4">
+          <div className="d-flex justify-content-between align-items-start">
+            <div className="d-flex align-items-center">
+              <div style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: '12px',
+                backgroundColor: `${color}15`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginRight: '16px'
+              }}>
+                <Icon size={24} style={{ color: color }} />
+              </div>
+              <div>
+                <h6 className="mb-0" style={{ color: '#6c757d', fontSize: '0.875rem' }}>{title}</h6>
+                <h3 className="mb-0" style={{ 
+                  color: '#2c3e50', 
+                  fontSize: '1.75rem', 
+                  fontWeight: '600',
+                  marginTop: '4px' 
+                }}>{value}</h3>
+              </div>
+            </div>
+          </div>
+          <div className="d-flex align-items-center mt-3" style={{ fontSize: '0.875rem' }}>
+            <div style={{
+              color: increase.startsWith('+') ? '#28a745' : '#dc3545',
+              marginRight: '8px',
+              display: 'flex',
+              alignItems: 'center'
+            }}>
+              {increase.startsWith('+') ? <FaArrowUp size={12} /> : <FaArrowDown size={12} />}
+              <span className="ms-1">{increase}</span>
+            </div>
+            <span style={{ color: '#6c757d' }}>this week</span>
+          </div>
+        </Card.Body>
+      </Card>
+    </motion.div>
+  );
+
   return (
-    <>
-      <h1>Dashboard</h1>
-      <Row className="mb-3">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      style={{
+        padding: '2rem',
+        backgroundColor: '#f8f9fa',
+        minHeight: '100vh'
+      }}
+    >
+      <Row className="align-items-center mb-4">
         <Col>
-          <Card className="bg-primary text-white">
-            <Card.Body>
-              <Card.Title>Products</Card.Title>
-              {loadingStock ? (
-                <Loader />
-              ) : errorStock ? (
-                <Message variant="danger">{errorStock}</Message>
-              ) : (
-                <h2>{products?.length || 0}</h2>
-              )}
-            </Card.Body>
-            <LinkContainer to="/products">
-              <Card.Footer className="text-white">
-                View Products <i className="fas fa-arrow-circle-right"></i>
-              </Card.Footer>
-            </LinkContainer>
-          </Card>
+          <h1 style={{ 
+            fontSize: '2rem', 
+            fontWeight: 700, 
+            color: '#2c3e50',
+            margin: 0,
+            letterSpacing: '-0.5px'
+          }}>
+            Dashboard Overview
+          </h1>
+          <p style={{ 
+            color: '#6c757d', 
+            margin: '0.5rem 0 0 0',
+            fontSize: '1rem' 
+          }}>
+            Welcome back to your dashboard
+          </p>
         </Col>
-
-        <Col>
-          <Card className="bg-warning text-white">
-            <Card.Body>
-              <Card.Title>Low Stock Items</Card.Title>
-              {loadingStock ? (
-                <Loader />
-              ) : errorStock ? (
-                <Message variant="danger">{errorStock}</Message>
-              ) : (
-                <h2>{lowStock?.length || 0}</h2>
-              )}
-            </Card.Body>
-            <LinkContainer to="/inventory">
-              <Card.Footer className="text-white">
-                View Inventory <i className="fas fa-arrow-circle-right"></i>
-              </Card.Footer>
-            </LinkContainer>
-          </Card>
-        </Col>
-
-        <Col>
-          <Card className="bg-success text-white">
-            <Card.Body>
-              <Card.Title>Today's Sales</Card.Title>
-              {loadingSales ? (
-                <Loader />
-              ) : errorSales ? (
-                <Message variant="danger">{errorSales}</Message>
-              ) : (
-                <h2>{dailySales?.count || 0}</h2>
-              )}
-            </Card.Body>
-            <LinkContainer to="/sales">
-              <Card.Footer className="text-white">
-                View Sales <i className="fas fa-arrow-circle-right"></i>
-              </Card.Footer>
-            </LinkContainer>
-          </Card>
-        </Col>
-
-        {userInfo && (userInfo.role === 'admin' || userInfo.role === 'owner') && (
-          <Col>
-            <Card className="bg-info text-white">
-              <Card.Body>
-                <Card.Title>Cash Balance</Card.Title>
-                {loadingFinance ? (
-                  <Loader />
-                ) : errorFinance ? (
-                  <Message variant="danger">{errorFinance}</Message>
-                ) : (
-                  <h2>{cashflow?.balance?.toFixed(2) || 0}</h2>
-                )}
-              </Card.Body>
-              <LinkContainer to="/finance">
-                <Card.Footer className="text-white">
-                  View Finance <i className="fas fa-arrow-circle-right"></i>
-                </Card.Footer>
-              </LinkContainer>
-            </Card>
-          </Col>
-        )}
       </Row>
 
-      <Row>
-        <Col md={6}>
-          <Card>
-            <Card.Header>
-              <h3>Recent Sales</h3>
+      <Row className="g-4 mb-5">
+        <Col sm={6} xl={3}>
+          <StatCard
+            icon={FaUsers}
+            title="Total Products"
+            value={products?.length || 0}
+            increase="+5"
+            color="#4285f4"
+          />
+        </Col>
+        <Col sm={6} xl={3}>
+          <StatCard
+            icon={FaUserCheck}
+            title="Low Stock Items"
+            value={lowStock?.length || 0}
+            increase="-2"
+            color="#34a853"
+          />
+        </Col>
+        <Col sm={6} xl={3}>
+          <StatCard
+            icon={FaChartLine}
+            title="Today's Sales"
+            value={dailySales?.count || 0}
+            increase="+15"
+            color="#fbbc05"
+          />
+        </Col>
+        <Col sm={6} xl={3}>
+          <StatCard
+            icon={FaMoneyBillWave}
+            title="Cash Balance"
+            value={`Rs. ${(cashflow?.balance || 0).toFixed(2)}`}
+            increase="+20K"
+            color="#ea4335"
+          />
+        </Col>
+      </Row>
+
+      <Row className="g-4">
+        <Col lg={8}>
+          <Card className="border-0 shadow-sm" style={{ borderRadius: '16px' }}>
+            <Card.Header className="bg-white border-0 pt-4 pb-0 px-4">
+              <div className="d-flex justify-content-between align-items-center">
+                <h5 className="mb-0" style={{ color: '#2c3e50', fontWeight: 600 }}>Recent Sales</h5>
+                <div className="d-flex gap-2">
+                  <select className="form-select form-select-sm" style={{ width: '120px' }}>
+                    <option>This Week</option>
+                    <option>This Month</option>
+                    <option>This Year</option>
+                  </select>
+                </div>
+              </div>
             </Card.Header>
-            <Card.Body>
+            <Card.Body className="p-4">
               {loadingSales ? (
                 <Loader />
               ) : errorSales ? (
@@ -142,48 +192,65 @@ const DashboardScreen = () => {
               ) : dailySales?.sales?.length === 0 ? (
                 <Message>No recent sales</Message>
               ) : (
-                <ul className="list-group">
+                <div className="list-group list-group-flush">
                   {dailySales?.sales?.slice(0, 5).map((sale) => (
-                    <LinkContainer key={sale._id} to={`/sales/${sale._id}`}>
-                      <li className="list-group-item">
-                        {sale.saleNumber} - {sale.customer.name} - Rs.{sale.totalAmount.toFixed(2)}
-                      </li>
-                    </LinkContainer>
+                    <div key={sale._id} className="list-group-item border-0 px-0 py-3">
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div>
+                          <h6 className="mb-1" style={{ color: '#2c3e50' }}>{sale.saleNumber}</h6>
+                          <small style={{ color: '#6c757d' }}>{sale.customer.name}</small>
+                        </div>
+                        <div style={{ color: '#28a745' }}>
+                          Rs. {sale.totalAmount.toFixed(2)}
+                        </div>
+                      </div>
+                    </div>
                   ))}
-                </ul>
+                </div>
               )}
             </Card.Body>
           </Card>
         </Col>
 
-        <Col md={6}>
-          <Card>
-            <Card.Header>
-              <h3>Low Stock Products</h3>
+        <Col lg={4}>
+          <Card className="border-0 shadow-sm" style={{ borderRadius: '16px' }}>
+            <Card.Header className="bg-white border-0 pt-4 pb-0 px-4">
+              <h5 className="mb-0" style={{ color: '#2c3e50', fontWeight: 600 }}>Recent Activities</h5>
             </Card.Header>
-            <Card.Body>
-              {loadingStock ? (
-                <Loader />
-              ) : errorStock ? (
-                <Message variant="danger">{errorStock}</Message>
-              ) : lowStock?.length === 0 ? (
-                <Message>No low stock items</Message>
-              ) : (
-                <ul className="list-group">
-                  {lowStock?.slice(0, 5).map((product) => (
-                    <LinkContainer key={product._id} to={`/products/${product._id}/edit`}>
-                      <li className="list-group-item">
-                        {product.name} ({product.brand}) - {product.currentStock} left
-                      </li>
-                    </LinkContainer>
-                  ))}
-                </ul>
-              )}
+            <Card.Body className="p-4">
+              <div className="timeline">
+                {[1, 2, 3, 4].map((item) => (
+                  <div key={item} className="timeline-item pb-4" style={{ position: 'relative' }}>
+                    <div style={{
+                      width: '10px',
+                      height: '10px',
+                      borderRadius: '50%',
+                      backgroundColor: '#4285f4',
+                      position: 'absolute',
+                      left: '-5px',
+                      top: '6px'
+                    }}></div>
+                    <div style={{
+                      borderLeft: '2px solid #e9ecef',
+                      paddingLeft: '20px',
+                      marginLeft: '0'
+                    }}>
+                      <h6 className="mb-1" style={{ fontSize: '0.875rem', color: '#2c3e50' }}>
+                        New sale recorded
+                      </h6>
+                      <p className="mb-0" style={{ fontSize: '0.875rem', color: '#6c757d' }}>
+                        Product XYZ sold for $500
+                      </p>
+                      <small style={{ color: '#adb5bd' }}>30 minutes ago</small>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </Card.Body>
           </Card>
         </Col>
       </Row>
-    </>
+    </motion.div>
   );
 };
 

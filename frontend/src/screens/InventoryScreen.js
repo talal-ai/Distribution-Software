@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { LinkContainer } from 'react-router-bootstrap';
-import { Table, Button, Row, Col, Form, Modal } from 'react-bootstrap';
+import { Table, Button, Row, Col, Form, Modal, Badge } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
@@ -10,6 +10,8 @@ import {
   getInventoryStock,
 } from '../actions/inventoryActions';
 import { listProducts } from '../actions/productActions';
+import { FaPlus, FaEdit, FaTrash, FaBoxOpen } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 
 const InventoryScreen = () => {
   const dispatch = useDispatch();
@@ -21,13 +23,13 @@ const InventoryScreen = () => {
   const [note, setNote] = useState('');
 
   const inventoryTransactionList = useSelector((state) => state.inventoryTransactionList);
-  const { loading, error, transactions } = inventoryTransactionList;
+  const { loading, error, transactions = [] } = inventoryTransactionList;
 
   const inventoryStock = useSelector((state) => state.inventoryStock);
-  const { loading: loadingStock, error: errorStock, products: stockProducts } = inventoryStock;
+  const { loading: loadingStock, error: errorStock, products: stockProducts = [] } = inventoryStock;
 
   const productList = useSelector((state) => state.productList);
-  const { products } = productList;
+  const { loading: loadingProducts, error: errorProducts, products = [] } = productList;
 
   const inventoryTransactionCreate = useSelector((state) => state.inventoryTransactionCreate);
   const {
@@ -65,15 +67,45 @@ const InventoryScreen = () => {
     handleClose();
   };
 
+  const getStatusBadgeVariant = (status) => {
+    switch (status) {
+      case 'In Stock':
+        return 'success';
+      case 'Low Stock':
+        return 'warning';
+      case 'Out of Stock':
+        return 'danger';
+      default:
+        return 'secondary';
+    }
+  };
+
   return (
-    <>
-      <Row className='align-items-center mb-3'>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Row className="align-items-center mb-4">
         <Col>
-          <h1>Inventory</h1>
+          <h1 className="mb-0" style={{ fontSize: '1.75rem', fontWeight: 600, color: '#2c3e50' }}>
+            Inventory
+          </h1>
         </Col>
-        <Col className='text-end'>
-          <Button onClick={handleShow}>
-            <i className='fas fa-plus'></i> Add Transaction
+        <Col xs="auto">
+          <Button 
+            variant="primary"
+            className="d-flex align-items-center gap-2"
+            style={{
+              backgroundColor: '#4b6cb7',
+              border: 'none',
+              borderRadius: '8px',
+              padding: '0.5rem 1rem'
+            }}
+            onClick={handleShow}
+          >
+            <FaPlus size={14} />
+            Add Item
           </Button>
         </Col>
       </Row>
@@ -84,36 +116,73 @@ const InventoryScreen = () => {
       ) : errorStock ? (
         <Message variant='danger'>{errorStock}</Message>
       ) : (
-        <Table striped bordered hover responsive className='table-sm'>
-          <thead>
-            <tr>
-              <th>PRODUCT</th>
-              <th>BRAND</th>
-              <th>CATEGORY</th>
-              <th>CURRENT STOCK</th>
-              <th>MIN STOCK</th>
-              <th>STATUS</th>
-            </tr>
-          </thead>
-          <tbody>
-            {stockProducts && stockProducts.map((product) => (
-              <tr key={product._id}>
-                <td>{product.name}</td>
-                <td>{product.brand}</td>
-                <td>{product.category}</td>
-                <td>{product.currentStock}</td>
-                <td>{product.minStockLevel}</td>
-                <td>
-                  {product.currentStock <= product.minStockLevel ? (
-                    <span className='text-danger'>Low Stock</span>
-                  ) : (
-                    <span className='text-success'>In Stock</span>
-                  )}
-                </td>
+        <div style={{
+          backgroundColor: '#fff',
+          borderRadius: '12px',
+          padding: '1.5rem',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.08)'
+        }}>
+          <Table hover responsive className="mb-0">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>SKU</th>
+                <th>Quantity</th>
+                <th>Reorder Point</th>
+                <th>Status</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {Array.isArray(stockProducts) && stockProducts.map((product) => (
+                <tr key={product._id}>
+                  <td>{product._id}</td>
+                  <td>{product.name}</td>
+                  <td>{product.sku}</td>
+                  <td>{product.currentStock}</td>
+                  <td>{product.minStockLevel}</td>
+                  <td>
+                    <Badge 
+                      bg={getStatusBadgeVariant(product.currentStock <= product.minStockLevel ? 'Low Stock' : 'In Stock')}
+                      style={{ fontSize: '0.8rem' }}
+                    >
+                      {product.currentStock <= product.minStockLevel ? 'Low Stock' : 'In Stock'}
+                    </Badge>
+                  </td>
+                  <td>
+                    <div className="d-flex gap-2">
+                      <Button 
+                        variant="light"
+                        size="sm"
+                        className="d-flex align-items-center"
+                        style={{ padding: '0.4rem 0.6rem' }}
+                      >
+                        <FaEdit size={14} />
+                      </Button>
+                      <Button 
+                        variant="light"
+                        size="sm"
+                        className="d-flex align-items-center"
+                        style={{ padding: '0.4rem 0.6rem' }}
+                      >
+                        <FaBoxOpen size={14} />
+                      </Button>
+                      <Button 
+                        variant="danger"
+                        size="sm"
+                        className="d-flex align-items-center"
+                        style={{ padding: '0.4rem 0.6rem' }}
+                      >
+                        <FaTrash size={14} />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </div>
       )}
 
       <h2 className='mt-4'>Recent Transactions</h2>
@@ -124,36 +193,44 @@ const InventoryScreen = () => {
       ) : error ? (
         <Message variant='danger'>{error}</Message>
       ) : (
-        <Table striped bordered hover responsive className='table-sm'>
-          <thead>
-            <tr>
-              <th>DATE</th>
-              <th>PRODUCT</th>
-              <th>TYPE</th>
-              <th>QUANTITY</th>
-              <th>NOTE</th>
-              <th>USER</th>
-            </tr>
-          </thead>
-          <tbody>
-            {transactions && transactions.map((transaction) => (
-              <tr key={transaction._id}>
-                <td>{new Date(transaction.createdAt).toLocaleDateString()}</td>
-                <td>{transaction.product.name}</td>
-                <td>
-                  {transaction.type === 'STOCK_IN' ? (
-                    <span className='text-success'>Stock In</span>
-                  ) : (
-                    <span className='text-danger'>Stock Out</span>
-                  )}
-                </td>
-                <td>{transaction.quantity}</td>
-                <td>{transaction.note}</td>
-                <td>{transaction.user.name}</td>
+        <div style={{
+          backgroundColor: '#fff',
+          borderRadius: '12px',
+          padding: '1.5rem',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.08)'
+        }}>
+          <Table hover responsive className="mb-0">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Product</th>
+                <th>Type</th>
+                <th>Quantity</th>
+                <th>Note</th>
+                <th>User</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {Array.isArray(transactions) && transactions.map((transaction) => (
+                <tr key={transaction._id}>
+                  <td>{new Date(transaction.createdAt).toLocaleDateString()}</td>
+                  <td>{transaction.product?.name || 'N/A'}</td>
+                  <td>
+                    <Badge 
+                      bg={transaction.type === 'STOCK_IN' ? 'success' : 'danger'}
+                      style={{ fontSize: '0.8rem' }}
+                    >
+                      {transaction.type === 'STOCK_IN' ? 'Stock In' : 'Stock Out'}
+                    </Badge>
+                  </td>
+                  <td>{transaction.quantity}</td>
+                  <td>{transaction.note}</td>
+                  <td>{transaction.user?.name || 'N/A'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </div>
       )}
 
       <Modal show={showModal} onHide={handleClose}>
@@ -170,7 +247,7 @@ const InventoryScreen = () => {
                 required
               >
                 <option value=''>Select Product</option>
-                {products && products.map((product) => (
+                {Array.isArray(products) && products.map((product) => (
                   <option key={product._id} value={product._id}>
                     {product.name} ({product.brand})
                   </option>
@@ -199,7 +276,7 @@ const InventoryScreen = () => {
                 onChange={(e) => setQuantity(e.target.value)}
                 required
                 min='1'
-              ></Form.Control>
+              />
             </Form.Group>
 
             <Form.Group controlId='note' className='mb-3'>
@@ -209,16 +286,25 @@ const InventoryScreen = () => {
                 placeholder='Enter note'
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-              ></Form.Control>
+              />
             </Form.Group>
 
-            <Button type='submit' variant='primary'>
+            <Button 
+              type='submit' 
+              variant='primary'
+              style={{
+                backgroundColor: '#4b6cb7',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '0.5rem 1rem'
+              }}
+            >
               Add Transaction
             </Button>
           </Form>
         </Modal.Body>
       </Modal>
-    </>
+    </motion.div>
   );
 };
 
