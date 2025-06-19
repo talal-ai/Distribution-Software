@@ -21,6 +21,9 @@ import {
   INVENTORY_REPORT_REQUEST,
   INVENTORY_REPORT_SUCCESS,
   INVENTORY_REPORT_FAIL,
+  PRODUCT_COST_UPDATE_REQUEST,
+  PRODUCT_COST_UPDATE_SUCCESS,
+  PRODUCT_COST_UPDATE_FAIL,
 } from '../constants/inventoryConstants';
 
 // List all inventory transactions
@@ -243,6 +246,46 @@ export const getInventoryReport = (params) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: INVENTORY_REPORT_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+// Update product cost price
+export const updateProductCostPrice = ({ productId, costPrice }) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: PRODUCT_COST_UPDATE_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.put(
+      `/api/inventory/product/${productId}/cost`,
+      { costPrice },
+      config
+    );
+
+    dispatch({
+      type: PRODUCT_COST_UPDATE_SUCCESS,
+      payload: data,
+    });
+
+    // Refresh the inventory stock to show updated cost price
+    dispatch(getInventoryStock());
+  } catch (error) {
+    dispatch({
+      type: PRODUCT_COST_UPDATE_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message

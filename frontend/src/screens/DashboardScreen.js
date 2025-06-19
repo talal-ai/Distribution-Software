@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Row, Col, Card } from 'react-bootstrap';
+import { Row, Col, Card, Button } from 'react-bootstrap';
 import { motion } from 'framer-motion';
 import { 
   FaUsers, FaUserCheck, FaChartLine, FaMoneyBillWave,
-  FaArrowUp, FaArrowDown
+  FaArrowUp, FaArrowDown, FaFileInvoiceDollar
 } from 'react-icons/fa';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import { getInventoryStock } from '../actions/inventoryActions';
 import { getSalesReport } from '../actions/saleActions';
 import { getFinanceReport } from '../actions/financeActions';
+import SalarySheetModal from '../components/SalarySheetModal';
 
 const DashboardScreen = () => {
   const dispatch = useDispatch();
@@ -35,6 +36,8 @@ const DashboardScreen = () => {
     error: errorFinance, 
     cashflow 
   } = financeReport;
+
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     dispatch(getInventoryStock());
@@ -130,8 +133,8 @@ const DashboardScreen = () => {
         </Col>
       </Row>
 
-      <Row className="g-4 mb-5">
-        <Col sm={6} xl={3}>
+      <Row className="g-4 mb-2">
+        <Col md={6}>
           <StatCard
             icon={FaUsers}
             title="Total Products"
@@ -140,7 +143,7 @@ const DashboardScreen = () => {
             color="#4285f4"
           />
         </Col>
-        <Col sm={6} xl={3}>
+        <Col md={6}>
           <StatCard
             icon={FaUserCheck}
             title="Low Stock Items"
@@ -149,7 +152,9 @@ const DashboardScreen = () => {
             color="#34a853"
           />
         </Col>
-        <Col sm={6} xl={3}>
+      </Row>
+      <Row className="g-4 mb-5">
+        <Col md={6}>
           <StatCard
             icon={FaChartLine}
             title="Today's Sales"
@@ -158,14 +163,16 @@ const DashboardScreen = () => {
             color="#fbbc05"
           />
         </Col>
-        <Col sm={6} xl={3}>
-          <StatCard
-            icon={FaMoneyBillWave}
-            title="Cash Balance"
-            value={`Rs. ${(cashflow?.balance || 0).toFixed(2)}`}
-            increase="+20K"
-            color="#ea4335"
-          />
+        <Col md={6}>
+          <div style={{ cursor: 'pointer' }} onClick={() => setShowModal(true)}>
+            <StatCard
+              icon={FaFileInvoiceDollar}
+              title="View Salary Sheet"
+              value={''}
+              increase={''}
+              color="#6f42c1"
+            />
+          </div>
         </Col>
       </Row>
 
@@ -250,6 +257,10 @@ const DashboardScreen = () => {
           </Card>
         </Col>
       </Row>
+
+      <SalarySheetModal show={showModal} onHide={() => setShowModal(false)} salesman="AMIR" />
+
+      <Button onClick={() => setShowModal(true)}>View Salary Sheet</Button>
     </motion.div>
   );
 };

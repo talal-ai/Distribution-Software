@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { FaTachometerAlt, FaBox, FaWarehouse, FaShoppingCart, 
-         FaMoneyBillWave, FaChartBar, FaUsers, FaCog, FaBars } from 'react-icons/fa';
+         FaMoneyBillWave, FaChartBar, FaUsers, FaCog, FaBars, FaBook } from 'react-icons/fa';
 import { logout } from '../actions/userActions';
 
 const Sidebar = () => {
@@ -38,6 +38,12 @@ const Sidebar = () => {
       icon: <FaShoppingCart />,
       path: '/sales',
       access: ['all']
+    },
+    {
+      title: 'Day Book',
+      icon: <FaBook />,
+      path: '/daybook',
+      access: ['admin', 'owner']
     },
     {
       title: 'Finance',

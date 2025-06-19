@@ -8,6 +8,9 @@
   --border-radius: 8px;
   --box-shadow: 0 2px 12px rgba(0,0,0,0.06);
   --transition: all 0.2s ease;
+  --header-bg: #e3eafc;
+  --header-bg-gradient: linear-gradient(to right, #e3eafc, #d1defa);
+  --table-border-color: rgba(0,0,0,0.08);
 }
 
 .content-wrapper {
@@ -130,10 +133,12 @@
 /* Table styling */
 .table {
   margin-bottom: 0;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 .table thead th {
-  background-color: rgba(75, 108, 183, 0.03);
+  background: var(--header-bg-gradient);
   border-bottom: none;
   font-weight: 600;
   color: #495057;
@@ -141,12 +146,15 @@
   font-size: 0.8rem;
   letter-spacing: 0.5px;
   padding: 0.85rem 0.75rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .table td, .table th {
   vertical-align: middle;
   padding: 0.85rem 0.75rem;
-  border-color: rgba(0,0,0,0.04);
+  border-color: var(--table-border-color);
 }
 
 .table tbody tr:hover {
@@ -166,11 +174,135 @@
   border-color: rgba(0,0,0,0.08);
   box-shadow: none;
   transition: var(--transition);
+  width: 100%;
 }
 
 .table .form-control:focus {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 0.2rem rgba(75, 108, 183, 0.15);
+}
+
+/* Brand name dropdown styling */
+.brand-dropdown {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+}
+
+/* Price list dropdown styling - similar to brand dropdown */
+.price-dropdown {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+}
+
+.dropdown-toggle-btn {
+  background: transparent !important;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6c757d;
+  transition: all 0.2s ease;
+}
+
+.dropdown-toggle-btn:hover,
+.dropdown-toggle-btn:focus {
+  color: var(--primary-color);
+  background-color: rgba(0,0,0,0.03) !important;
+  box-shadow: none !important;
+}
+
+/* Custom dropdown menu styles */
+.custom-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1060;
+  min-width: 220px; /* Increased width for longer brand names */
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 0.5rem 0;
+  margin: 0.125rem 0 0;
+  font-size: 0.875rem;
+  color: #212529;
+  text-align: left;
+  list-style: none;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 0.25rem;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* Position dropdown to the left when it would go off screen */
+.custom-dropdown-menu.dropdown-left {
+  right: auto;
+  left: 0;
+}
+
+/* Improve input field display in dropdowns */
+.position-relative .form-control {
+  padding-right: 30px; /* Make room for the dropdown toggle button */
+  text-overflow: ellipsis; /* Add ellipsis for text that's too long */
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Make the dropdown headers more visible */
+.custom-dropdown-menu::before {
+  display: block;
+  padding: 0.25rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6c757d;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  letter-spacing: 0.5px;
+}
+
+/* Brand dropdown header */
+.brand-dropdown .custom-dropdown-menu::before {
+  content: 'BRAND NAME';
+}
+
+/* Price dropdown header */
+.price-dropdown .custom-dropdown-menu::before {
+  content: 'PRICE LIST';
+}
+
+.custom-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  clear: both;
+  font-weight: 400;
+  color: #212529;
+  text-align: inherit;
+  white-space: normal;
+  word-break: break-word;
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  line-height: 1.4;
+}
+
+.custom-dropdown-item:hover {
+  color: var(--primary-color);
+  text-decoration: none;
+  background-color: rgba(75, 108, 183, 0.08);
+}
+
+/* Fix for dropdowns in table cells */
+.table td {
+  position: relative;
+}
+
+.table td .position-relative {
+  width: 100%;
 }
 
 /* Buttons styling */
@@ -202,6 +334,24 @@
   background-color: #f8f9fa;
   color: #495057;
   border-color: #c1c3c8;
+}
+
+/* Action buttons in table */
+.table .action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.table .action-button {
+  padding: 0.35rem;
+  border-radius: 4px;
+  transition: var(--transition);
+  background-color: transparent;
+}
+
+.table .action-button:hover {
+  background-color: rgba(0,0,0,0.05);
 }
 
 /* Badges styling */
@@ -250,4 +400,32 @@
   .form-label {
     margin-bottom: 0.25rem;
   }
+}
+
+/* Cash details table styling */
+.cash-details-table thead th {
+  background-color: #f0d78c;
+  color: #2c3e50;
+  text-align: center;
+  font-weight: 600;
+}
+
+.cash-details-table thead tr:nth-child(2) th {
+  background-color: #a9d1f5;
+}
+
+.cash-details-table tbody td {
+  text-align: center;
+  padding: 0.5rem;
+}
+
+.cash-details-table tfoot td {
+  background-color: #f0d78c;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Fix for dropdown menu positioning */
+.dropdown-menu {
+  z-index: 1060;
 } 

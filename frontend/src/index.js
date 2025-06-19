@@ -1,19 +1,34 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import store from './store';
 import './index.css';
-import './bootstrap.min.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import './bootstrap.min.css';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+// Use createRoot instead of ReactDOM.render for better performance (React 18)
+const container = document.getElementById('root');
+const root = createRoot(container);
+
+// Disable StrictMode in production for better performance
 root.render(
-  <React.StrictMode>
+  process.env.NODE_ENV === 'production' ? (
     <Provider store={store}>
       <App />
     </Provider>
-  </React.StrictMode>
+  ) : (
+    <React.StrictMode>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </React.StrictMode>
+  )
 );
 
-reportWebVitals(); 
+// Only measure vitals in development to save resources in production
+if (process.env.NODE_ENV !== 'production') {
+  reportWebVitals(console.log);
+} else {
+  reportWebVitals();
+} 

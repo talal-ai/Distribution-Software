@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const path = require('path');
+const compression = require('compression');
 const connectDB = require('../config/db');
 
 // Load environment variables
@@ -13,10 +14,17 @@ connectDB();
 // Initialize Express
 const app = express();
 
-// Body parser
-app.use(express.json());
+// Body parser with larger size limit for efficiency
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Dev logging middleware
+// Use compression for all responses
+app.use(compression());
+
+// Add basic caching for static assets
+const cacheTime = 86400000 * 7; // 7 days
+
+// Dev logging middleware - only use in development
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
@@ -30,13 +38,20 @@ app.use('/api/finance', require('./routes/financeRoutes'));
 
 // Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
-  // Set static folder
-  app.use(express.static(path.join(__dirname, '../frontend/build')));
+  // Set static folder with caching
+  app.use(express.static(path.join(__dirname, '../frontend/build'), {
+    maxAge: cacheTime
+  }));
 
   app.get('*', (req, res) =>
     res.sendFile(path.resolve(__dirname, '../frontend', 'build', 'index.html'))
   );
 } else {
+  // Also add caching for development mode
+  app.use(express.static(path.join(__dirname, '../frontend/public'), {
+    maxAge: 0 // No cache in dev mode
+  }));
+  
   app.get('/', (req, res) => {
     res.send('API is running...');
   });

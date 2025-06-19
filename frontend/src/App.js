@@ -12,6 +12,7 @@ import FinanceScreen from './screens/FinanceScreen';
 import ReportsScreen from './screens/ReportsScreen';
 import UsersScreen from './screens/UsersScreen';
 import SettingsScreen from './screens/SettingsScreen';
+import DayBookScreen from './screens/DayBookScreen';
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
           <Route path="/reports" element={<ReportsScreen />} />
           <Route path="/users" element={<UsersScreen />} />
           <Route path="/settings" element={<SettingsScreen />} />
+          <Route path="/daybook" element={<DayBookScreen />} />
         </Routes>
       </Layout>
     </Router>
