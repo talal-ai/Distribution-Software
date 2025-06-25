@@ -71,21 +71,26 @@ export const logout = () => (dispatch) => {
 };
 
 // Register action
-export const register = (name, email, password) => async (dispatch) => {
+export const register = (name, email, password, role) => async (dispatch, getState) => {
   try {
     dispatch({
       type: USER_REGISTER_REQUEST,
     });
 
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
     const config = {
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
       },
     };
 
     const { data } = await axios.post(
       '/api/users/register',
-      { name, email, password },
+      { name, email, password, role },
       config
     );
 
@@ -93,13 +98,6 @@ export const register = (name, email, password) => async (dispatch) => {
       type: USER_REGISTER_SUCCESS,
       payload: data,
     });
-
-    dispatch({
-      type: USER_LOGIN_SUCCESS,
-      payload: data,
-    });
-
-    localStorage.setItem('userInfo', JSON.stringify(data));
   } catch (error) {
     dispatch({
       type: USER_REGISTER_FAIL,

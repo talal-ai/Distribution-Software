@@ -1,0 +1,92 @@
+[
+  {
+    "_id": "6847308ae75d4c8d6546ff49",
+    "name": "Owner",
+    "email": "owner@example.com",
+    "password": "$2a$10$S6LVt.XdYTYRBvR0lONlSOWPBW5YawSP/g8geUUwy5hMNp5FdOdPy",
+    "role": "owner",
+    "createdAt": "2025-06-09T19:05:46.240Z",
+    "updatedAt": "2025-06-09T19:05:46.240Z",
+    "__v": 0
+  },
+  {
+    "_id": "6847308ae75d4c8d6546ff52",
+    "name": "Admin",
+    "email": "admin@example.com",
+    "password": "$2a$10$3S7znNCA8mIrtiSwEpOsH.0NcYhS9taCPKpsCc2GBp4l0NCwXRKCq",
+    "role": "admin",
+    "createdAt": "2025-06-09T19:05:46.381Z",
+    "updatedAt": "2025-06-09T19:05:46.381Z",
+    "__v": 0
+  },
+  {
+    "_id": "6847308ae75d4c8d6546ff54",
+    "name": "Salesman 1",
+    "email": "salesman1@example.com",
+    "password": "$2a$10$JmH67yZgNJ.FT1Tc.InNlOn1dHQdX3MfGxouwN3c75n3k0q/YrGqS",
+    "role": "salesman",
+    "createdAt": "2025-06-09T19:05:46.484Z",
+    "updatedAt": "2025-06-09T19:05:46.484Z",
+    "__v": 0
+  },
+  {
+    "_id": "6847308ae75d4c8d6546ff56",
+    "name": "Salesman 2",
+    "email": "salesman2@example.com",
+    "password": "$2a$10$b0mpUznxCMNKytwdzYl5a.h7p.jo13EDNq.ZxNazMD9er5bpO2Eja",
+    "role": "salesman",
+    "createdAt": "2025-06-09T19:05:46.575Z",
+    "updatedAt": "2025-06-09T19:05:46.575Z",
+    "__v": 0
+  },
+  {
+    "_id": "6854726630f0511323e9563b",
+    "name": "BASHIR",
+    "username": "RID1",
+    "password": "$2a$10$ahpeOomb4l55EXP6Nbx/5O.jkT.nCpfmES578avwc.3e.iTKrfury",
+    "role": "salesman",
+    "createdAt": "2025-06-19T20:26:14.094Z",
+    "updatedAt": "2025-06-19T20:26:14.094Z",
+    "__v": 0
+  },
+  {
+    "_id": "6855a12f36a3f3f6a979fed7",
+    "name": "ALI",
+    "email": "RID2@GH.COM",
+    "password": "$2a$10$k3rtkpnTp6beXI38aWvHgeQn.5TWBkrdIPuDqPyD9vvuB32sR5U4y",
+    "role": "user",
+    "createdAt": "2025-06-20T17:58:07.101Z",
+    "updatedAt": "2025-06-20T17:58:07.101Z",
+    "__v": 0
+  },
+  {
+    "_id": "6855a270e65b958775bb043d",
+    "name": "ALI",
+    "email": "RID3@GH.COM",
+    "password": "$2a$10$zaCHC9WGJkkx4gSkj2MfwuMoqeRyh6OBtVz7Q4jFRbbU13lX2HRWK",
+    "role": "user",
+    "createdAt": "2025-06-20T18:03:28.031Z",
+    "updatedAt": "2025-06-20T18:03:28.031Z",
+    "__v": 0
+  },
+  {
+    "_id": "6855a39bd558e4bd9eb2a538",
+    "name": "ADEEL",
+    "email": "RID45",
+    "password": "$2a$10$LkJQSI3/IeqOPmh5E8o4QuTy44zusHzkE8Jjdxp7FqBKCSJr2fjg6",
+    "role": "user",
+    "createdAt": "2025-06-20T18:08:27.704Z",
+    "updatedAt": "2025-06-20T18:08:27.704Z",
+    "__v": 0
+  },
+  {
+    "_id": "6855a5b5c5c1b98852111f6d",
+    "name": "ADEEL 2",
+    "email": "RID12",
+    "password": "$2a$10$KcmjszwrUpzo.FwpJ8FJM.EmDQVvDco/1Q44fqI1xT58URa86sIV2",
+    "role": "user",
+    "createdAt": "2025-06-20T18:17:25.638Z",
+    "updatedAt": "2025-06-20T18:17:25.638Z",
+    "__v": 0
+  }
+]

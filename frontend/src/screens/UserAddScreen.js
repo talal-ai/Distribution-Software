@@ -3,44 +3,41 @@ import { useNavigate } from 'react-router-dom';
 import { Form, Button, Container, Row, Col, Card } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
-import { FaEye, FaEyeSlash, FaUser, FaLock } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaLock, FaUserTag } from 'react-icons/fa';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
-import { login } from '../actions/userActions';
+import { register } from '../actions/userActions';
 
-const LoginScreen = () => {
+const UserAddScreen = () => {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [role, setRole] = useState('user');
+  const [message, setMessage] = useState(null);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const userLogin = useSelector((state) => state.userLogin);
-  const { loading, error, userInfo } = userLogin;
+  const { userInfo } = userLogin;
+
+  const userRegister = useSelector((state) => state.userRegister);
+  const { loading, error, success } = userRegister;
 
   useEffect(() => {
-    if (userInfo) {
-      // Redirect based on role
-      switch (userInfo.role) {
-        case 'owner':
-          navigate('/owner-dashboard');
-          break;
-        case 'admin':
-          navigate('/admin-dashboard');
-          break;
-        case 'user':
-          navigate('/user-dashboard');
-          break;
-        default:
-          navigate('/dashboard');
-      }
+    // Check if user is admin or owner
+    if (!userInfo || !(userInfo.role === 'admin' || userInfo.role === 'owner')) {
+      navigate('/login');
     }
-  }, [navigate, userInfo]);
+
+    if (success) {
+      navigate('/users');
+    }
+  }, [navigate, userInfo, success]);
 
   const submitHandler = (e) => {
     e.preventDefault();
-    dispatch(login(email, password));
+    dispatch(register(name, email, password, role));
   };
 
   return (
@@ -54,7 +51,8 @@ const LoginScreen = () => {
           >
             <Card className="p-4 shadow">
               <Card.Body>
-                <h2 className="text-center mb-4">Login</h2>
+                <h2 className="text-center mb-4">Add New User</h2>
+                {message && <Message variant="danger">{message}</Message>}
                 {error && <Message variant="danger">{error}</Message>}
                 {loading ? (
                   <Loader />
@@ -67,9 +65,39 @@ const LoginScreen = () => {
                         </span>
                         <Form.Control
                           type="text"
-                          placeholder="Email address"
+                          placeholder="Full Name"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          required
+                        />
+                      </div>
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                      <div className="input-group">
+                        <span className="input-group-text">
+                          <FaEnvelope />
+                        </span>
+                        <Form.Control
+                          type="text"
+                          placeholder="Email Address"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
+                          required
+                        />
+                      </div>
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                      <div className="input-group">
+                        <span className="input-group-text">
+                          <FaLock />
+                        </span>
+                        <Form.Control
+                          type="password"
+                          placeholder="Password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
                           required
                         />
                       </div>
@@ -78,21 +106,19 @@ const LoginScreen = () => {
                     <Form.Group className="mb-4">
                       <div className="input-group">
                         <span className="input-group-text">
-                          <FaLock />
+                          <FaUserTag />
                         </span>
-                        <Form.Control
-                          type={showPassword ? 'text' : 'password'}
-                          placeholder="Password"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
+                        <Form.Select
+                          value={role}
+                          onChange={(e) => setRole(e.target.value)}
                           required
-                        />
-                        <Button
-                          variant="outline-secondary"
-                          onClick={() => setShowPassword(!showPassword)}
                         >
-                          {showPassword ? <FaEyeSlash /> : <FaEye />}
-                        </Button>
+                          <option value="user">User</option>
+                          <option value="admin">Admin</option>
+                          {userInfo && userInfo.role === 'owner' && (
+                            <option value="owner">Owner</option>
+                          )}
+                        </Form.Select>
                       </div>
                     </Form.Group>
 
@@ -103,7 +129,7 @@ const LoginScreen = () => {
                         size="lg"
                         className="mb-3"
                       >
-                        Sign In
+                        Add User
                       </Button>
                     </div>
                   </Form>
@@ -117,4 +143,4 @@ const LoginScreen = () => {
   );
 };
 
-export default LoginScreen; 
+export default UserAddScreen; 

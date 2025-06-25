@@ -99,25 +99,25 @@ const products = [
 const users = [
   {
     name: 'Owner',
-    email: 'owner@example.com',
+    email: 'owner',
     password: 'password123',
     role: 'owner',
   },
   {
     name: 'Admin',
-    email: 'admin@example.com',
+    email: 'admin',
     password: 'password123',
     role: 'admin',
   },
   {
     name: 'Salesman 1',
-    email: 'salesman1@example.com',
+    email: 'salesman1',
     password: 'password123',
     role: 'salesman',
   },
   {
     name: 'Salesman 2',
-    email: 'salesman2@example.com',
+    email: 'salesman2',
     password: 'password123',
     role: 'salesman',
   }

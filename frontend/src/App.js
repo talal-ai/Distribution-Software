@@ -11,6 +11,7 @@ import SalesScreen from './screens/SalesScreen';
 import FinanceScreen from './screens/FinanceScreen';
 import ReportsScreen from './screens/ReportsScreen';
 import UsersScreen from './screens/UsersScreen';
+import UserAddScreen from './screens/UserAddScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import DayBookScreen from './screens/DayBookScreen';
 
@@ -28,6 +29,7 @@ const App = () => {
           <Route path="/finance" element={<FinanceScreen />} />
           <Route path="/reports" element={<ReportsScreen />} />
           <Route path="/users" element={<UsersScreen />} />
+          <Route path="/users/add" element={<UserAddScreen />} />
           <Route path="/settings" element={<SettingsScreen />} />
           <Route path="/daybook" element={<DayBookScreen />} />
         </Routes>

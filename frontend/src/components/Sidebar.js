@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { FaTachometerAlt, FaBox, FaWarehouse, FaShoppingCart, 
-         FaMoneyBillWave, FaChartBar, FaUsers, FaCog, FaBars, FaBook } from 'react-icons/fa';
+         FaMoneyBillWave, FaChartBar, FaUsers, FaCog, FaBars, FaBook, FaPlus, FaChevronDown, FaSignOutAlt } from 'react-icons/fa';
 import { logout } from '../actions/userActions';
 
 const Sidebar = () => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [expandedMenus, setExpandedMenus] = useState([]);
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
@@ -61,7 +63,19 @@ const Sidebar = () => {
       title: 'Users',
       icon: <FaUsers />,
       path: '/users',
-      access: ['owner']
+      access: ['admin', 'owner'],
+      subItems: [
+        {
+          title: 'All Users',
+          path: '/users',
+          icon: <FaUsers />,
+        },
+        {
+          title: 'Add User',
+          path: '/users/add',
+          icon: <FaPlus />,
+        }
+      ]
     },
     {
       title: 'Settings',
@@ -113,7 +127,8 @@ const Sidebar = () => {
       borderRadius: '8px',
       marginBottom: '0.5rem',
       transition: 'all 0.2s ease',
-      fontSize: '0.9rem'
+      fontSize: '0.9rem',
+      cursor: 'pointer'
     },
     menuIcon: {
       fontSize: '1.2rem',
@@ -139,25 +154,106 @@ const Sidebar = () => {
       cursor: 'pointer',
       fontSize: '12px',
       boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
+    },
+    subMenuItem: {
+      display: 'flex',
+      alignItems: 'center',
+      padding: '0.5rem 1rem 0.5rem 2.5rem',
+      color: '#64748b',
+      textDecoration: 'none',
+      borderRadius: '8px',
+      marginBottom: '0.2rem',
+      transition: 'all 0.2s ease',
+      fontSize: '0.85rem'
+    },
+    menuItemHeader: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      width: '100%',
+      cursor: 'pointer'
+    },
+    chevron: {
+      transition: 'transform 0.2s ease'
+    },
+    logoutSection: {
+      marginTop: 'auto',
+      borderTop: '1px solid #e2e8f0',
+      paddingTop: '1rem'
     }
   };
 
   const isActive = (path) => location.pathname === path;
 
+  const toggleMenu = (title) => {
+    setExpandedMenus(prev => 
+      prev.includes(title) 
+        ? prev.filter(item => item !== title)
+        : [...prev, title]
+    );
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/login');
+  };
+
   const MenuItem = ({ item }) => {
     if (item.access.includes('all') || 
         (userInfo && item.access.includes(userInfo.role))) {
+      
+      const isMenuExpanded = expandedMenus.includes(item.title);
+      const hasSubItems = item.subItems && item.subItems.length > 0;
+
+      const handleClick = () => {
+        if (hasSubItems) {
+          toggleMenu(item.title);
+        } else {
+          navigate(item.path);
+        }
+      };
+
       return (
-        <Link
-          to={item.path}
-          style={{
-            ...sidebarStyles.menuItem,
-            ...(isActive(item.path) ? sidebarStyles.activeMenuItem : {})
-          }}
-        >
-          <span style={sidebarStyles.menuIcon}>{item.icon}</span>
-          {!isCollapsed && <span>{item.title}</span>}
-        </Link>
+        <>
+          <div
+            onClick={handleClick}
+            style={{
+              ...sidebarStyles.menuItem,
+              ...(isActive(item.path) && !hasSubItems ? sidebarStyles.activeMenuItem : {})
+            }}
+          >
+            <div style={sidebarStyles.menuItemHeader}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={sidebarStyles.menuIcon}>{item.icon}</span>
+                {!isCollapsed && <span>{item.title}</span>}
+              </div>
+              {hasSubItems && !isCollapsed && (
+                <FaChevronDown style={{
+                  ...sidebarStyles.chevron,
+                  transform: isMenuExpanded ? 'rotate(180deg)' : 'rotate(0)'
+                }} />
+              )}
+            </div>
+          </div>
+
+          {hasSubItems && !isCollapsed && isMenuExpanded && (
+            <div>
+              {item.subItems.map((subItem, index) => (
+                <div
+                  key={index}
+                  onClick={() => navigate(subItem.path)}
+                  style={{
+                    ...sidebarStyles.subMenuItem,
+                    ...(isActive(subItem.path) ? sidebarStyles.activeMenuItem : {})
+                  }}
+                >
+                  <span style={sidebarStyles.menuIcon}>{subItem.icon}</span>
+                  <span>{subItem.title}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       );
     }
     return null;
@@ -183,10 +279,22 @@ const Sidebar = () => {
         <FaBars />
       </div>
 
-      <div style={{ flex: 1 }}>
-        {menuItems.map((item, index) => (
-          <MenuItem key={index} item={item} />
-        ))}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <div>
+          {menuItems.map((item, index) => (
+            <MenuItem key={index} item={item} />
+          ))}
+        </div>
+        
+        <div style={sidebarStyles.logoutSection}>
+          <div
+            onClick={handleLogout}
+            style={sidebarStyles.menuItem}
+          >
+            <span style={sidebarStyles.menuIcon}><FaSignOutAlt /></span>
+            {!isCollapsed && <span>Logout</span>}
+          </div>
+        </div>
       </div>
     </motion.div>
   );

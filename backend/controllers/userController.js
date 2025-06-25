@@ -47,8 +47,10 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  // Check for user email
-  const user = await User.findOne({ email }).select('+password');
+  // Check for user by email (case insensitive)
+  const user = await User.findOne({ 
+    email: { $regex: new RegExp(`^${email}$`, 'i') } 
+  }).select('+password');
 
   if (user && (await user.matchPassword(password))) {
     res.json({
@@ -82,9 +84,10 @@ const updateUser = asyncHandler(async (req, res) => {
     throw new Error('User not found');
   }
 
+  // Set runValidators to false to skip email format validation
   const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
-    runValidators: true,
+    runValidators: false,
   });
 
   res.status(200).json(updatedUser);
