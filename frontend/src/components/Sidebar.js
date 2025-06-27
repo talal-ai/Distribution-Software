@@ -3,8 +3,9 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { FaTachometerAlt, FaBox, FaWarehouse, FaShoppingCart, 
-         FaMoneyBillWave, FaChartBar, FaUsers, FaCog, FaBars, FaBook, FaPlus, FaChevronDown, FaSignOutAlt } from 'react-icons/fa';
+         FaMoneyBillWave, FaChartBar, FaUsers, FaCog, FaBars, FaBook, FaPlus, FaChevronDown, FaSignOutAlt, FaCalendarAlt } from 'react-icons/fa';
 import { logout } from '../actions/userActions';
+import { Nav } from 'react-bootstrap';
 
 const Sidebar = () => {
   const dispatch = useDispatch();
@@ -54,6 +55,12 @@ const Sidebar = () => {
       access: ['admin', 'owner']
     },
     {
+      title: 'Attendance',
+      icon: <FaCalendarAlt />,
+      path: '/attendance',
+      access: ['admin', 'owner']
+    },
+    {
       title: 'Reports',
       icon: <FaChartBar />,
       path: '/reports',
@@ -62,12 +69,12 @@ const Sidebar = () => {
     {
       title: 'Users',
       icon: <FaUsers />,
-      path: '/users',
+      path: '/admin/userlist',
       access: ['admin', 'owner'],
       subItems: [
         {
           title: 'All Users',
-          path: '/users',
+          path: '/admin/userlist',
           icon: <FaUsers />,
         },
         {
